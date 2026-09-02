@@ -30,7 +30,7 @@ export default function RegistrationPage() {
       setLoading(true);
       setError("");
       
-      const backendEventId = EVENT_SLUG_TO_ID[slug || ""];
+      const backendEventId = EVENT_SLUG_TO_ID[slug || ""] || slug;
       
       if (!backendEventId) {
         if (isMounted) {

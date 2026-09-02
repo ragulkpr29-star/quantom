@@ -11,6 +11,7 @@ export default function RootEvaluationPage() {
   const [error, setError] = useState("");
   
   const [e, setE] = useState<EventConfig | null>(null);
+  const [registrations, setRegistrations] = useState<Registration[]>([]);
   const [evalsList, setEvalsList] = useState<any[]>([]);
   const [criteria, setCriteria] = useState<Criterion[]>([]);
   const [results, setResults] = useState<ResultRecord[]>([]);
@@ -30,29 +31,42 @@ export default function RootEvaluationPage() {
         const ev = eventService.getById(selectedEventId);
         if (!ev) throw new Error("Event not found");
         
-        const [evals, crit, res] = await Promise.all([
+        const [allRegs, evals, crit, res] = await Promise.all([
+          googleSheetsService.getRegistrations(""),
           googleSheetsService.getEvaluations(selectedEventId),
           googleSheetsService.getCriteria(selectedEventId),
           googleSheetsService.getResults(selectedEventId)
         ]);
         
+        const regs = allRegs.filter((r: any) => r.eventId === selectedEventId);
+        
         if (isMounted) {
           setE(ev);
+          setRegistrations(regs);
           setEvalsList(evals);
           setCriteria(crit);
           setResults(res);
           
           // Initialize draft scores from fetched evals
           const initialDrafts: Record<string, Record<string, number>> = {};
+          const evalsMap = new Map();
           evals.forEach((r: any) => {
-            if (r.teamId) {
-              initialDrafts[r.teamId] = {
-                [crit[0]?.name]: typeof r.m1 === 'number' ? r.m1 : NaN,
-                [crit[1]?.name]: typeof r.m2 === 'number' ? r.m2 : NaN,
-                [crit[2]?.name]: typeof r.m3 === 'number' ? r.m3 : NaN,
-                [crit[3]?.name]: typeof r.m4 === 'number' ? r.m4 : NaN,
-                [crit[4]?.name]: typeof r.m5 === 'number' ? r.m5 : NaN,
-              };
+            if (r.teamId) evalsMap.set(r.teamId, r);
+          });
+          
+          regs.forEach((r: Registration) => {
+            const teamId = r.teamId || r.registrationId;
+            if (teamId) {
+              const existingEval = evalsMap.get(teamId);
+              if (existingEval) {
+                initialDrafts[teamId] = {
+                  [crit[0]?.name]: typeof existingEval.m1 === 'number' ? existingEval.m1 : NaN,
+                  [crit[1]?.name]: typeof existingEval.m2 === 'number' ? existingEval.m2 : NaN,
+                  [crit[2]?.name]: typeof existingEval.m3 === 'number' ? existingEval.m3 : NaN,
+                  [crit[3]?.name]: typeof existingEval.m4 === 'number' ? existingEval.m4 : NaN,
+                  [crit[4]?.name]: typeof existingEval.m5 === 'number' ? existingEval.m5 : NaN,
+                };
+              }
             }
           });
           setDraftScores(initialDrafts);
@@ -185,30 +199,34 @@ export default function RootEvaluationPage() {
               </div>
               {error}
             </div>
-          ) : criteria.length === 0 ? (
+          ) : registrations.length === 0 ? (
             <div className="empty-panel">
               <div className="empty-icon">
                 <Medal size={22} />
               </div>
-              Evaluation criteria will be updated from the official event document.
-            </div>
-          ) : evalsList.length === 0 ? (
-            <div className="empty-panel">
-              <div className="empty-icon">
-                <Medal size={22} />
-              </div>
-              No registered participants to evaluate.
+              No registered participants for this event.
             </div>
           ) : e ? (
             <>
-              {/* Criteria Legend */}
-              <div style={{ marginBottom: '16px', background: 'var(--surface-alt)', padding: '12px 16px', borderRadius: '8px', fontSize: '13px', display: 'flex', gap: '16px', flexWrap: 'wrap', border: '1px solid var(--border)' }}>
-                {criteria.map((c, i) => (
-                  <div key={c.name}>
-                    <strong style={{ color: 'var(--green)' }}>M{i+1}</strong> — {c.name} ({c.weight})
+              {criteria.length === 0 && (
+                <div className="empty-panel" style={{ marginBottom: '20px' }}>
+                  <div className="empty-icon">
+                    <Medal size={22} />
                   </div>
-                ))}
-              </div>
+                  Evaluation criteria are not configured for this event.
+                </div>
+              )}
+              
+              {/* Criteria Legend */}
+              {criteria.length > 0 && (
+                <div style={{ marginBottom: '16px', background: 'var(--surface-alt)', padding: '12px 16px', borderRadius: '8px', fontSize: '13px', display: 'flex', gap: '16px', flexWrap: 'wrap', border: '1px solid var(--border)' }}>
+                  {criteria.map((c, i) => (
+                    <div key={c.name}>
+                      <strong style={{ color: 'var(--green)' }}>M{i+1}</strong> — {c.name} ({c.weight})
+                    </div>
+                  ))}
+                </div>
+              )}
 
               <div className="table-card">
                 <div className="table-wrap" style={{ overflowX: 'auto' }}>
@@ -226,8 +244,9 @@ export default function RootEvaluationPage() {
                       </tr>
                     </thead>
                     <tbody>
-                      {evalsList.map((r) => {
-                        const tId = r.teamId;
+                      {registrations.map((r) => {
+                        const tId = r.teamId || r.registrationId;
+                        if (!tId) return null;
                         const isSaving = saveStatus[tId] === "saving";
                         const isSaved = saveStatus[tId] === "saved";
                         const isError = saveStatus[tId] === "error";
@@ -270,8 +289,8 @@ export default function RootEvaluationPage() {
                                 {isError && <span style={{ color: 'var(--red)', fontSize: '12px' }}>Failed</span>}
                                 <button 
                                   className="btn btn-primary" 
-                                  style={{ padding: '6px 16px', fontSize: '12px', opacity: (!valid || isSaving || isSaved) ? 0.5 : 1, cursor: (!valid || isSaving || isSaved) ? 'not-allowed' : 'pointer' }}
-                                  disabled={!valid || isSaving || isSaved}
+                                  style={{ padding: '6px 16px', fontSize: '12px', opacity: (!valid || isSaving || isSaved || criteria.length === 0) ? 0.5 : 1, cursor: (!valid || isSaving || isSaved || criteria.length === 0) ? 'not-allowed' : 'pointer' }}
+                                  disabled={!valid || isSaving || isSaved || criteria.length === 0}
                                   onClick={() => handleSaveRow(tId)}
                                 >
                                   {isSaving ? 'SAVING...' : 'SAVE'}
