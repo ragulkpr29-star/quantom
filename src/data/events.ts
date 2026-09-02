@@ -1,7 +1,7 @@
 import type { EventConfig, Registration } from "../types";
 export const events: EventConfig[] = [
   {
-    id: "paper-presentation",
+    id: "PP",
     number: "01",
     name: "Paper Presentation",
     category: "Technical",
@@ -30,7 +30,7 @@ export const events: EventConfig[] = [
     registrationOpen: true,
   },
   {
-    id: "project-presentation",
+    id: "PR",
     number: "02",
     name: "Project Presentation",
     category: "Technical",
@@ -59,7 +59,7 @@ export const events: EventConfig[] = [
     registrationOpen: true,
   },
   {
-    id: "debate",
+    id: "VO",
     number: "03",
     name: "Vox Pop – Debate",
     category: "Communication",
@@ -96,7 +96,7 @@ export const events: EventConfig[] = [
     registrationOpen: true,
   },
   {
-    id: "web-designing",
+    id: "WE",
     number: "04",
     name: "Web Designing",
     category: "Design & Technology",
@@ -114,7 +114,7 @@ export const events: EventConfig[] = [
     registrationOpen: true,
   },
   {
-    id: "show-your-talent",
+    id: "SH",
     number: "05",
     name: "Show Your Talent",
     category: "Cultural",
@@ -141,7 +141,7 @@ export const events: EventConfig[] = [
     registrationOpen: true,
   },
   {
-    id: "ipl-auction",
+    id: "IP",
     number: "06",
     name: "IPL Auction",
     category: "Entertainment",
@@ -159,68 +159,4 @@ export const events: EventConfig[] = [
     registrationOpen: true,
   },
 ];
-export const registrations: Registration[] = [
-  {
-    id: "r1",
-    registrationId: "Q27-PP-001",
-    eventId: "paper-presentation",
-    eventName: "Paper Presentation",
-    teamName: "TechNova",
-    leaderName: "Aarav Kumar",
-    leaderRollNo: "24CDR075",
-    leaderEmail: "aarav@example.com",
-    leaderPhone: "9876543210",
-    members: [
-      { name: "Aarav Kumar", rollNo: "24CDR075" },
-      { name: "Shreya R", rollNo: "24CDR096" },
-      { name: "Nivetha K", rollNo: "24CDR074" },
-    ],
-    status: "confirmed",
-    registeredAt: "2026-08-30T10:30:00",
-  },
-  {
-    id: "r2",
-    registrationId: "Q27-PR-001",
-    eventId: "project-presentation",
-    eventName: "Project Presentation",
-    teamName: "CodeCraft",
-    leaderName: "Rohit S",
-    leaderRollNo: "24CDR083",
-    leaderEmail: "rohit@example.com",
-    leaderPhone: "9123456780",
-    members: [
-      { name: "Rohit S", rollNo: "24CDR083" },
-      { name: "Kavin M", rollNo: "24CDR088" },
-    ],
-    status: "confirmed",
-    registeredAt: "2026-08-30T12:15:00",
-  },
-  {
-    id: "r3",
-    registrationId: "Q27-DEB-001",
-    eventId: "debate",
-    eventName: "Vox Pop – Debate",
-    teamName: "",
-    leaderName: "Divya R",
-    leaderRollNo: "24CDR103",
-    leaderEmail: "divya@example.com",
-    leaderPhone: "9988776655",
-    members: [{ name: "Divya R", rollNo: "24CDR103" }],
-    status: "confirmed",
-    registeredAt: "2026-08-31T09:20:00",
-  },
-  {
-    id: "r4",
-    registrationId: "Q27-TAL-001",
-    eventId: "show-your-talent",
-    eventName: "Show Your Talent",
-    teamName: "",
-    leaderName: "Nandhini V",
-    leaderRollNo: "24CDR112",
-    leaderEmail: "nandhini@example.com",
-    leaderPhone: "9000011111",
-    members: [{ name: "Nandhini V", rollNo: "24CDR112" }],
-    status: "pending",
-    registeredAt: "2026-08-31T11:45:00",
-  },
-];
+export const registrations: Registration[] = [];

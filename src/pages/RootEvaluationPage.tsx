@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { AdminSidebar } from "../components/admin/AdminSidebar";
 import { eventService, googleSheetsService } from "../services";
 import { Medal, CheckCircle2, AlertCircle } from "lucide-react";
+import { RootSidebar } from "../components/admin/RootSidebar";
 import type { EvaluationRecord, Registration, EventConfig, Criterion, ResultRecord } from "../types";
 
-export default function AdminEvaluationPage() {
+export default function RootEvaluationPage() {
   const allEvents = eventService.getAll();
   const [selectedEventId, setSelectedEventId] = useState<string>(allEvents[0]?.id || "");
   const [loading, setLoading] = useState(false);
@@ -102,7 +102,6 @@ export default function AdminEvaluationPage() {
   const isValidRow = (teamId: string) => {
     if (criteria.length === 0) return false;
     const pScores = draftScores[teamId] || {};
-    // All criteria must have a valid number
     return criteria.every(c => {
       const val = pScores[c.name];
       return typeof val === 'number' && !isNaN(val) && val >= 0 && val <= c.weight;
@@ -119,8 +118,8 @@ export default function AdminEvaluationPage() {
       const payload: any = {
         eventId: e.id,
         teamId,
-        user: "admin",
-        role: "ADMIN"
+        user: "root_user",
+        role: "ROOT"
       };
       
       criteria.forEach((c, i) => {
@@ -148,17 +147,17 @@ export default function AdminEvaluationPage() {
 
   return (
     <div className="admin-layout">
-      <AdminSidebar />
+      <RootSidebar />
       <main className="admin-main">
         <div className="admin-container">
           <div className="admin-heading">
             <div>
-              <span className="eyebrow">Judging</span>
-              <h1>Evaluation</h1>
-              {e && <p>{e.name}</p>}
+              <span className="eyebrow" style={{ color: "var(--red)" }}>ROOT OS</span>
+              <h1>Evaluation Engine</h1>
             </div>
           </div>
 
+          
           <div className="filters" style={{ marginBottom: "20px" }}>
             <select 
               value={selectedEventId} 
@@ -297,11 +296,13 @@ export default function AdminEvaluationPage() {
                 </div>
               ) : (
                 <div className="winner-grid">
-                  {results.slice(0, 3).map((r) => (
+                  {results.slice(0, 5).map((r) => (
                     <div className={`winner p${r.rank}`} key={r.teamId}>
-                      <span className="winner-medal">{r.rank === 1 ? "🥇" : r.rank === 2 ? "🥈" : "🥉"}</span>
+                      <span className="winner-medal">
+                        {r.rank === 1 ? "🥇" : r.rank === 2 ? "🥈" : r.rank === 3 ? "🥉" : ""}
+                      </span>
                       <span>
-                        {r.rank}{r.rank === 1 ? "ST" : r.rank === 2 ? "ND" : "RD"} PLACE
+                        {r.rank}{r.rank === 1 ? "ST" : r.rank === 2 ? "ND" : r.rank === 3 ? "RD" : "TH"} PLACE
                       </span>
                       <h3>{r.teamName || r.leaderName}</h3>
                       <strong>{r.total} / 100</strong>

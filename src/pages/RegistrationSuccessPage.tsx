@@ -18,9 +18,9 @@ export default function RegistrationSuccessPage() {
         </p>
 
         <div className="success-id-box">
-          <div className="success-id-label">Registration ID</div>
+          <div className="success-id-label">Team ID</div>
           <strong className="success-id-value">
-            {s.registrationId || "Q27-XXXX"}
+            {s.teamId || "Q27-XXXX"}
           </strong>
         </div>
 

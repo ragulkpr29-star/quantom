@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../ui/Button";
+import { googleSheetsService } from "../../services";
 import type { EventConfig, Participant } from "../../types";
 
 function Field({
@@ -38,21 +39,45 @@ export function RegistrationForm({ event }: { event: EventConfig }) {
   );
   const [agree, setAgree] = useState(false);
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!agree) return;
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
+    
+    try {
+      const payload = {
+        eventId: event.id,
+        eventName: event.name,
+        teamName: team,
+        participantName: leader.name,
+        email: leader.email,
+        phone: leader.phone,
+        department: "Computer Technology",
+        rollNo: leader.rollNo,
+        member2: members[1]?.name || "",
+        member3: members[2]?.name || "",
+        member4: members[3]?.name || "",
+      };
+      
+      const res = await googleSheetsService.registerUser(payload);
+      
+      if (!res.success) {
+        throw new Error(res.error || "Registration failed");
+      }
+      
       nav("/register/success", {
         state: {
           eventName: event.name,
           teamName: team,
           leaderName: leader.name,
-          registrationId: `Q27-${event.number}-001`,
+          teamId: res.teamId,
         },
       });
-    }, 900);
+    } catch (err: any) {
+      alert(err.message || "Unable to connect to registration server. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const addMember = () => {
@@ -88,7 +113,7 @@ export function RegistrationForm({ event }: { event: EventConfig }) {
             <input
               value={team}
               onChange={(e) => setTeam(e.target.value)}
-              placeholder="e.g. TechNova"
+              placeholder="e.g. Code Wizards"
               required
             />
           </Field>

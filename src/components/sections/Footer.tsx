@@ -46,6 +46,14 @@ export function Footer() {
               Feedback
             </a>
           </div>
+          <div className="footer-links-col reveal reveal-delay-2">
+            <h4>Support</h4>
+            <p style={{ fontSize: "14px", color: "var(--muted)", margin: "0 0 12px 0", lineHeight: "1.6" }}>
+              Facing any error on the website or registration form? Contact for Registration Enquiry:
+            </p>
+            <a href="mailto:kec.quantum@gmail.com">kec.quantum@gmail.com</a>
+            <a href="tel:+919443757559">9443757559</a>
+          </div>
         </div>
       </div>
       <div className="footer-bottom">

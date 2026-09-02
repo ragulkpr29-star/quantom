@@ -1,4 +1,3 @@
-import { useEffect, useRef } from "react";
 import { Link, useParams, Navigate } from "react-router-dom";
 import { Navbar } from "../components/sections/Navbar";
 import { Footer } from "../components/sections/Footer";
@@ -8,26 +7,6 @@ import { ArrowLeft, ArrowRight, CheckCircle2, Users } from "lucide-react";
 export default function EventDetailPage() {
   const { slug } = useParams();
   const e = eventService.getById(slug || "");
-  const criteriaRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const el = criteriaRef.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            el.querySelectorAll<HTMLElement>(".criteria-bar-fill").forEach(
-              (bar) => bar.classList.add("animated")
-            );
-          }
-        });
-      },
-      { threshold: 0.3 }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [e]);
 
   if (!e) return <Navigate to="/events" replace />;
 
@@ -92,32 +71,6 @@ export default function EventDetailPage() {
                   ))}
                 </ul>
               </div>
-
-              {e.evaluationCriteria.length > 0 && (
-                <div className="detail-section" ref={criteriaRef}>
-                  <h2>Evaluation Criteria</h2>
-                  <div className="criteria-bars">
-                    {e.evaluationCriteria.map((c) => (
-                      <div className="criteria-bar-item" key={c.name}>
-                        <div className="criteria-bar-header">
-                          <span className="criteria-bar-name">{c.name}</span>
-                          <span className="criteria-bar-pct">{c.weight}%</span>
-                        </div>
-                        <div className="criteria-bar-track">
-                          <div
-                            className="criteria-bar-fill"
-                            style={
-                              {
-                                "--pct": `${c.weight}%`,
-                              } as React.CSSProperties
-                            }
-                          />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
             </section>
 
             {/* CTA sidebar */}

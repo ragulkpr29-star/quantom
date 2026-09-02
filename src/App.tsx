@@ -11,7 +11,12 @@ import AdminDashboardPage from "./pages/AdminDashboardPage";
 import AdminRegistrationsPage from "./pages/AdminRegistrationsPage";
 import AdminEventsPage from "./pages/AdminEventsPage";
 import AdminEvaluationPage from "./pages/AdminEvaluationPage";
-import AdminExportsPage from "./pages/AdminExportsPage";
+import AdminAuditLogPage from "./pages/AdminAuditLogPage";
+import RootLoginPage from "./pages/RootLoginPage";
+import RootDashboardPage from "./pages/RootDashboardPage";
+import RootEvaluationPage from "./pages/RootEvaluationPage";
+import RootResultsPage from "./pages/RootResultsPage";
+import RootAuditLogPage from "./pages/RootAuditLogPage";
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -40,7 +45,14 @@ export default function App() {
         />
         <Route path="/admin/events" element={<AdminEventsPage />} />
         <Route path="/admin/evaluation" element={<AdminEvaluationPage />} />
-        <Route path="/admin/exports" element={<AdminExportsPage />} />
+        <Route path="/admin/audit-log" element={<AdminAuditLogPage />} />
+        
+        {/* Root OS */}
+        <Route path="/root-os" element={<RootLoginPage />} />
+        <Route path="/root-os/dashboard" element={<RootDashboardPage />} />
+        <Route path="/root-os/evaluation" element={<RootEvaluationPage />} />
+        <Route path="/root-os/results" element={<RootResultsPage />} />
+        <Route path="/root-os/audit-log" element={<RootAuditLogPage />} />
       </Routes>
     </BrowserRouter>
   );

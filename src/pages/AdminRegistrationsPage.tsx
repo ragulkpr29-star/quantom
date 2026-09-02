@@ -1,25 +1,38 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { AdminSidebar } from "../components/admin/AdminSidebar";
-import { registrationService } from "../services";
+import { googleSheetsService } from "../services";
 import { events } from "../data/events";
 import { Search, FileDown } from "lucide-react";
+import type { Registration } from "../types";
+
 export default function AdminRegistrationsPage() {
   const [query, setQuery] = useState("");
   const [event, setEvent] = useState("all");
+  const [allRegistrations, setAllRegistrations] = useState<Registration[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    setLoading(true);
+    setError("");
+    googleSheetsService.getRegistrations(event === "all" ? "" : event)
+      .then(res => setAllRegistrations(res))
+      .catch(err => setError(err.message))
+      .finally(() => setLoading(false));
+  }, [event]);
+
   const rs = useMemo(
     () =>
-      registrationService
-        .getAll()
-        .filter(
-          (r) =>
-            (event === "all" || r.eventId === event) &&
-            [r.registrationId, r.leaderName, r.leaderRollNo, r.teamName]
-              .join(" ")
-              .toLowerCase()
-              .includes(query.toLowerCase()),
-        ),
-    [query, event],
+      allRegistrations.filter(
+        (r) =>
+          [r.teamId, r.registrationId, r.leaderName, r.leaderRollNo, r.teamName]
+            .join(" ")
+            .toLowerCase()
+            .includes(query.toLowerCase()),
+      ),
+    [query, allRegistrations],
   );
+
   return (
     <div className="admin-layout">
       <AdminSidebar />
@@ -38,7 +51,7 @@ export default function AdminRegistrationsPage() {
             <div className="search">
               <Search />
               <input
-                placeholder="Search name, roll no, registration ID…"
+                placeholder="Search name, roll no, team ID…"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
               />
@@ -52,12 +65,15 @@ export default function AdminRegistrationsPage() {
               ))}
             </select>
           </div>
+          
+          {error && <div className="error-message" style={{ color: "red", marginBottom: "1rem" }}>{error}</div>}
+
           <div className="table-card">
             <div className="table-wrap">
               <table>
                 <thead>
                   <tr>
-                    <th>Reg ID</th>
+                    <th>Team ID</th>
                     <th>Event</th>
                     <th>Team / Name</th>
                     <th>Leader</th>
@@ -68,8 +84,8 @@ export default function AdminRegistrationsPage() {
                 </thead>
                 <tbody>
                   {rs.map((r) => (
-                    <tr key={r.id}>
-                      <td className="mono">{r.registrationId}</td>
+                    <tr key={r.id || r.teamId || r.registrationId}>
+                      <td className="mono">{r.teamId || r.registrationId}</td>
                       <td>{r.eventName}</td>
                       <td>
                         <strong>{r.teamName || r.leaderName}</strong>
@@ -78,14 +94,15 @@ export default function AdminRegistrationsPage() {
                       <td className="mono">{r.leaderRollNo}</td>
                       <td>{r.leaderPhone}</td>
                       <td>
-                        <span className={`status ${r.status}`}>{r.status}</span>
+                        <span className={`status ${r.status || 'pending'}`}>{r.status || 'pending'}</span>
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
-            {rs.length === 0 && (
+            {loading && <div className="empty">Loading registrations...</div>}
+            {!loading && rs.length === 0 && (
               <div className="empty">No registrations found.</div>
             )}
           </div>
