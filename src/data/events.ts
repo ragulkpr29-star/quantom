@@ -61,7 +61,7 @@ export const events: EventConfig[] = [
   {
     id: "VO",
     number: "03",
-    name: "Vox Pop – Debate",
+    name: "Vox Pop - Debate",
     category: "Communication",
     description:
       "An individual on-the-spot debate where participants argue for or against an assigned topic.",

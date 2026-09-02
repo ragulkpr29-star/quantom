@@ -4,7 +4,7 @@ import { Navbar } from "../components/sections/Navbar";
 import { Footer } from "../components/sections/Footer";
 import { eventService, googleSheetsService } from "../services";
 import { RegistrationForm } from "../components/forms/RegistrationForm";
-import { ArrowLeft, AlertCircle } from "lucide-react";
+import { ArrowLeft, AlertCircle, Clock } from "lucide-react";
 import type { EventConfig } from "../types";
 
 const EVENT_SLUG_TO_ID: Record<string, string> = {
@@ -17,7 +17,29 @@ const EVENT_SLUG_TO_ID: Record<string, string> = {
   "ipl-auction": "IP"
 };
 
+const REGISTRATION_MAINTENANCE = true;
+
 export default function RegistrationPage() {
+  if (REGISTRATION_MAINTENANCE) {
+    return (
+      <>
+        <Navbar />
+        <main style={{ minHeight: "60vh", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: "16px", textAlign: "center", padding: "20px" }}>
+          <Clock size={48} style={{ color: "var(--green)" }} />
+          <h2>Registration Page Under Maintenance</h2>
+          <p style={{ fontSize: "1.1rem", maxWidth: "600px", color: "var(--muted)" }}>
+            Registration will open on Sunday at 6:00 PM.<br />
+            Please come back then to register for the events.<br />
+            <br />
+            Thank you for your patience!
+          </p>
+          <Link to="/events" className="btn btn-outline" style={{ marginTop: "10px" }}>Back to Events</Link>
+        </main>
+        <Footer />
+      </>
+    );
+  }
+
   const { slug } = useParams();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -25,13 +47,13 @@ export default function RegistrationPage() {
 
   useEffect(() => {
     let isMounted = true;
-    
+
     const loadEvent = async () => {
       setLoading(true);
       setError("");
-      
+
       const backendEventId = EVENT_SLUG_TO_ID[slug || ""] || slug;
-      
+
       if (!backendEventId) {
         if (isMounted) {
           setError("Event configuration not found");
@@ -45,7 +67,7 @@ export default function RegistrationPage() {
         const backendEvent = backendEvents.find(
           (x: any) => x.id === backendEventId || x.eventId === backendEventId
         );
-        
+
         if (!backendEvent) {
           if (isMounted) setError("Event configuration not found");
           return;
@@ -55,7 +77,7 @@ export default function RegistrationPage() {
         // Note: 'debate' is the local slug for vox-pop-debate in events.ts
         const localSlug = slug === "vox-pop-debate" ? "debate" : slug;
         const localConfig = eventService.getById(localSlug || "");
-        
+
         // Ensure criteria is also retrieved from backend
         await googleSheetsService.getCriteria(backendEventId);
 
@@ -88,7 +110,7 @@ export default function RegistrationPage() {
     };
 
     loadEvent();
-    
+
     return () => { isMounted = false; };
   }, [slug]);
 
