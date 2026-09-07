@@ -52,7 +52,20 @@ export function Footer() {
               Facing any error on the website or registration form? Contact for Registration Enquiry:
             </p>
             <a href="mailto:kec.quantum@gmail.com">kec.quantum@gmail.com</a>
-            <a href="tel:+919443757559">9443757559</a>
+            <a href="tel:+919443757559" style={{
+              display: "inline-block",
+              padding: "4px 12px",
+              border: "1px solid var(--green)",
+              borderRadius: "999px",
+              color: "var(--green-dark)",
+              fontSize: "14px",
+              fontWeight: "700",
+              background: "rgba(168, 207, 69, 0.05)",
+              marginTop: "8px",
+              textDecoration: "none"
+            }}>
+              9443757559
+            </a>
           </div>
         </div>
       </div>

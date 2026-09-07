@@ -9,7 +9,7 @@ const EVENT_MAPPING = [
   { id: "PR", name: "Project Presentation" },
   { id: "VO", name: "Vox Pop - Debate" },
   { id: "WE", name: "Web Designing" },
-  { id: "SH", name: "Show Your Talent" },
+  { id: "SH", name: "Culturals" },
   { id: "IP", name: "IPL Auction" }
 ];
 
@@ -94,7 +94,7 @@ function setupQuantum27() {
       ["PR", "Project Presentation", "Problem & Relevance", 20, "Technical Implementation", 30, "Innovation", 20, "Presentation", 20, "Time Management", 10],
       ["VO", "Vox Pop - Debate", "Clarity of Thought", 25, "Argument Strength", 25, "Rebuttal", 25, "Confidence", 15, "Time Management", 10],
       ["WE", "Web Designing", "UI/UX Design", 25, "Creativity", 25, "Responsiveness", 20, "Code Quality", 20, "Functionality", 10],
-      ["SH", "Show Your Talent", "Originality", 30, "Skill Level", 30, "Audience Engagement", 20, "Overall Presentation", 20, "", 0],
+      ["SH", "Culturals", "Originality", 30, "Skill Level", 30, "Audience Engagement", 20, "Overall Presentation", 20, "", 0],
       ["IP", "IPL Auction", "Bidding Strategy", 30, "Team Composition", 30, "Budget Management", 20, "Decision Making", 20, "", 0]
     ];
     

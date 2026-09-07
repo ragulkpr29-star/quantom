@@ -17,6 +17,7 @@ import RootDashboardPage from "./pages/RootDashboardPage";
 import RootEvaluationPage from "./pages/RootEvaluationPage";
 import RootResultsPage from "./pages/RootResultsPage";
 import RootAuditLogPage from "./pages/RootAuditLogPage";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -38,21 +39,25 @@ export default function App() {
         <Route path="/register/:slug" element={<RegistrationPage />} />
         <Route path="/register/success" element={<RegistrationSuccessPage />} />
         <Route path="/admin-login" element={<AdminLoginPage />} />
-        <Route path="/admin" element={<AdminDashboardPage />} />
+        
+        {/* Protected Admin Routes */}
+        <Route path="/admin" element={<ProtectedRoute><AdminDashboardPage /></ProtectedRoute>} />
         <Route
           path="/admin/registrations"
-          element={<AdminRegistrationsPage />}
+          element={<ProtectedRoute><AdminRegistrationsPage /></ProtectedRoute>}
         />
-        <Route path="/admin/events" element={<AdminEventsPage />} />
-        <Route path="/admin/evaluation" element={<AdminEvaluationPage />} />
-        <Route path="/admin/audit-log" element={<AdminAuditLogPage />} />
+        <Route path="/admin/events" element={<ProtectedRoute><AdminEventsPage /></ProtectedRoute>} />
+        <Route path="/admin/evaluation" element={<ProtectedRoute><AdminEvaluationPage /></ProtectedRoute>} />
+        <Route path="/admin/audit-log" element={<ProtectedRoute><AdminAuditLogPage /></ProtectedRoute>} />
         
         {/* Root OS */}
         <Route path="/root-os" element={<RootLoginPage />} />
-        <Route path="/root-os/dashboard" element={<RootDashboardPage />} />
-        <Route path="/root-os/evaluation" element={<RootEvaluationPage />} />
-        <Route path="/root-os/results" element={<RootResultsPage />} />
-        <Route path="/root-os/audit-log" element={<RootAuditLogPage />} />
+        
+        {/* Protected Root OS Routes */}
+        <Route path="/root-os/dashboard" element={<ProtectedRoute><RootDashboardPage /></ProtectedRoute>} />
+        <Route path="/root-os/evaluation" element={<ProtectedRoute><RootEvaluationPage /></ProtectedRoute>} />
+        <Route path="/root-os/results" element={<ProtectedRoute><RootResultsPage /></ProtectedRoute>} />
+        <Route path="/root-os/audit-log" element={<ProtectedRoute><RootAuditLogPage /></ProtectedRoute>} />
       </Routes>
     </BrowserRouter>
   );

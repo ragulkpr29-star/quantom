@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
   Users,
@@ -18,6 +18,18 @@ const items = [
 
 export function AdminSidebar() {
   const loc = useLocation();
+  const nav = useNavigate();
+
+  const handleLogout = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    try {
+      await fetch("/api/logout", { method: "POST" });
+    } catch (err) {
+      // Ignore network errors on logout
+    }
+    nav("/admin-login");
+  };
+
   return (
     <aside className="admin-sidebar">
       <div className="admin-sidebar-inner">
@@ -37,10 +49,10 @@ export function AdminSidebar() {
             </Link>
           ))}
         </nav>
-        <Link className="exit" to="/">
+        <a href="#" className="exit" onClick={handleLogout}>
           <LogOut size={17} />
-          Exit Admin
-        </Link>
+          Log Out
+        </a>
       </div>
     </aside>
   );

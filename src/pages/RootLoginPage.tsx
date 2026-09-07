@@ -17,15 +17,36 @@ function Field({
 
 export default function RootLoginPage() {
   const nav = useNavigate();
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (username && password) {
+    if (email && password) {
       setLoading(true);
-      setTimeout(() => nav("/root-os/evaluation"), 600);
+      setError("");
+
+      try {
+        const res = await fetch("/api/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password })
+        });
+        
+        const data = await res.json();
+        
+        if (res.ok && data.success) {
+          nav("/root-os/dashboard");
+        } else {
+          setError(data.error || "Invalid email or password.");
+        }
+      } catch (err) {
+        setError("An unexpected error occurred. Please try again.");
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -47,13 +68,18 @@ export default function RootLoginPage() {
           onSubmit={handleLogin}
           style={{ textAlign: "left", marginTop: "28px" }}
         >
+          {error && (
+            <div style={{ backgroundColor: "#B91C1C", color: "white", padding: "10px", borderRadius: "8px", marginBottom: "16px", fontSize: "0.9rem", fontWeight: 600 }}>
+              {error}
+            </div>
+          )}
           <Field
-            label="Username"
-            type="text"
+            label="Email Address"
+            type="email"
             required
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            placeholder="root"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="ragulkpr29@gmail.com"
           />
           <Field
             label="Password"
@@ -61,7 +87,7 @@ export default function RootLoginPage() {
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="••••••••"
+            placeholder="Enter your password"
           />
           <Button type="submit" loading={loading} className="btn-primary btn-full">
             LOGIN{" "}

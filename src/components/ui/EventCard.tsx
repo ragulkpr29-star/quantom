@@ -10,11 +10,13 @@ export function EventCard({
   delay?: number;
 }) {
   const membersLabel =
-    event.participationType === "individual"
-      ? "Individual"
-      : event.maxMembers
-        ? `${event.minMembers}–${event.maxMembers} Members`
-        : "Team";
+    event.id === "IP"
+      ? "Individual / 2 Members"
+      : event.participationType === "individual"
+        ? "Individual"
+        : event.maxMembers
+          ? `${event.minMembers}–${event.maxMembers} Members`
+          : "Team";
 
   return (
     <Link

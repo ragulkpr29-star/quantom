@@ -9,51 +9,51 @@ export default function AdminEvaluationPage() {
   const [selectedEventId, setSelectedEventId] = useState<string>(allEvents[0]?.id || "");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  
+
   const [e, setE] = useState<EventConfig | null>(null);
   const [registrations, setRegistrations] = useState<Registration[]>([]);
   const [evalsList, setEvalsList] = useState<any[]>([]);
   const [criteria, setCriteria] = useState<Criterion[]>([]);
   const [results, setResults] = useState<ResultRecord[]>([]);
-  
+
   const [draftScores, setDraftScores] = useState<Record<string, Record<string, number>>>({});
   const [saveStatus, setSaveStatus] = useState<Record<string, "saving" | "saved" | "error" | undefined>>({});
-  
+
   // Load data when event changes
   useEffect(() => {
     if (!selectedEventId) return;
     let isMounted = true;
-    
+
     const loadData = async () => {
       setLoading(true);
       setError("");
       try {
         const ev = eventService.getById(selectedEventId);
         if (!ev) throw new Error("Event not found");
-        
+
         const [allRegs, evals, crit, res] = await Promise.all([
-          googleSheetsService.getRegistrations(""),
+          googleSheetsService.getRegistrations(selectedEventId),
           googleSheetsService.getEvaluations(selectedEventId),
           googleSheetsService.getCriteria(selectedEventId),
           googleSheetsService.getResults(selectedEventId)
         ]);
-        
+
         const regs = allRegs.filter((r: any) => r.eventId === selectedEventId);
-        
+
         if (isMounted) {
           setE(ev);
           setRegistrations(regs);
           setEvalsList(evals);
           setCriteria(crit);
           setResults(res);
-          
+
           // Initialize draft scores from fetched evals
           const initialDrafts: Record<string, Record<string, number>> = {};
           const evalsMap = new Map();
           evals.forEach((r: any) => {
             if (r.teamId) evalsMap.set(r.teamId, r);
           });
-          
+
           regs.forEach((r: Registration) => {
             const teamId = r.teamId || r.registrationId;
             if (teamId) {
@@ -82,7 +82,7 @@ export default function AdminEvaluationPage() {
         }
       }
     };
-    
+
     loadData();
     return () => { isMounted = false; };
   }, [selectedEventId]);
@@ -90,7 +90,7 @@ export default function AdminEvaluationPage() {
   const handleScoreChange = (teamId: string, criterionName: string, value: string, max: number) => {
     let numValue = parseInt(value, 10);
     if (isNaN(numValue)) numValue = 0;
-    
+
     // Prevent negative and above max
     if (numValue < 0) numValue = 0;
     if (numValue > max) numValue = max;
@@ -125,9 +125,9 @@ export default function AdminEvaluationPage() {
 
   const handleSaveRow = async (teamId: string) => {
     if (!e || !isValidRow(teamId)) return;
-    
+
     setSaveStatus(prev => ({ ...prev, [teamId]: "saving" }));
-    
+
     try {
       const scores = draftScores[teamId];
       const payload: any = {
@@ -136,25 +136,25 @@ export default function AdminEvaluationPage() {
         user: "admin",
         role: "ADMIN"
       };
-      
+
       criteria.forEach((c, i) => {
         payload[`m${i + 1}`] = scores[c.name];
       });
-      
+
       await googleSheetsService.saveMarks(payload);
-      
+
       const [newEvals, newRes] = await Promise.all([
         googleSheetsService.getEvaluations(e.id),
         googleSheetsService.getResults(e.id)
       ]);
       setEvalsList(newEvals);
       setResults(newRes);
-      
+
       setSaveStatus(prev => ({ ...prev, [teamId]: "saved" }));
       setTimeout(() => {
-        setSaveStatus(prev => ({ ...prev, [teamId]: undefined })); 
+        setSaveStatus(prev => ({ ...prev, [teamId]: undefined }));
       }, 3000);
-      
+
     } catch (err) {
       setSaveStatus(prev => ({ ...prev, [teamId]: "error" }));
     }
@@ -174,8 +174,8 @@ export default function AdminEvaluationPage() {
           </div>
 
           <div className="filters" style={{ marginBottom: "20px" }}>
-            <select 
-              value={selectedEventId} 
+            <select
+              value={selectedEventId}
               onChange={(ev) => setSelectedEventId(ev.target.value)}
               style={{ width: '100%', maxWidth: '300px', padding: '10px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--surface-alt)', color: 'var(--text)' }}
             >
@@ -217,13 +217,13 @@ export default function AdminEvaluationPage() {
                   Evaluation criteria are not configured for this event.
                 </div>
               )}
-              
+
               {/* Criteria Legend */}
               {criteria.length > 0 && (
                 <div style={{ marginBottom: '16px', background: 'var(--surface-alt)', padding: '12px 16px', borderRadius: '8px', fontSize: '13px', display: 'flex', gap: '16px', flexWrap: 'wrap', border: '1px solid var(--border)' }}>
                   {criteria.map((c, i) => (
                     <div key={c.name}>
-                      <strong style={{ color: 'var(--green)' }}>M{i+1}</strong> — {c.name} ({c.weight})
+                      <strong style={{ color: 'var(--green)' }}>M{i + 1}</strong> — {c.name} ({c.weight})
                     </div>
                   ))}
                 </div>
@@ -237,7 +237,7 @@ export default function AdminEvaluationPage() {
                         <th style={{ width: '250px' }}>TEAM / PARTICIPANT</th>
                         {criteria.map((c, i) => (
                           <th key={c.name} style={{ textAlign: 'center', width: '80px' }}>
-                            M{i+1}
+                            M{i + 1}
                           </th>
                         ))}
                         <th style={{ textAlign: 'center', width: '80px' }}>TOTAL</th>
@@ -252,7 +252,7 @@ export default function AdminEvaluationPage() {
                         const isSaved = saveStatus[tId] === "saved";
                         const isError = saveStatus[tId] === "error";
                         const valid = isValidRow(tId);
-                        
+
                         return (
                           <tr key={tId}>
                             <td>
@@ -288,8 +288,8 @@ export default function AdminEvaluationPage() {
                               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '8px' }}>
                                 {isSaved && <span style={{ color: 'var(--green)', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '4px' }}><CheckCircle2 size={14} /> Saved</span>}
                                 {isError && <span style={{ color: 'var(--red)', fontSize: '12px' }}>Failed</span>}
-                                <button 
-                                  className="btn btn-primary" 
+                                <button
+                                  className="btn btn-primary"
                                   style={{ padding: '6px 16px', fontSize: '12px', opacity: (!valid || isSaving || isSaved || criteria.length === 0) ? 0.5 : 1, cursor: (!valid || isSaving || isSaved || criteria.length === 0) ? 'not-allowed' : 'pointer' }}
                                   disabled={!valid || isSaving || isSaved || criteria.length === 0}
                                   onClick={() => handleSaveRow(tId)}

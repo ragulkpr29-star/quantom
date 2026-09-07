@@ -13,11 +13,11 @@ const EVENT_SLUG_TO_ID: Record<string, string> = {
   "vox-pop-debate": "VO",
   "debate": "VO",
   "web-designing": "WE",
-  "show-your-talent": "SH",
+  "culturals": "SH",
   "ipl-auction": "IP"
 };
 
-const REGISTRATION_MAINTENANCE = true;
+const REGISTRATION_MAINTENANCE = false;
 
 export default function RegistrationPage() {
   if (REGISTRATION_MAINTENANCE) {
@@ -74,12 +74,14 @@ export default function RegistrationPage() {
         }
 
         // We get the local config for UI text (rules, etc)
-        // Note: 'debate' is the local slug for vox-pop-debate in events.ts
-        const localSlug = slug === "vox-pop-debate" ? "debate" : slug;
-        const localConfig = eventService.getById(localSlug || "");
+        const localConfig = eventService.getById(backendEventId);
 
         // Ensure criteria is also retrieved from backend
-        await googleSheetsService.getCriteria(backendEventId);
+        try {
+          await googleSheetsService.getCriteria(backendEventId);
+        } catch (e) {
+          console.warn("Criteria fetch failed (possibly unauthorized)", e);
+        }
 
         if (isMounted) {
           // We pass the backend ID to the form to override the local config ID
@@ -142,7 +144,7 @@ export default function RegistrationPage() {
   }
 
   // Determine actual local slug for the back link
-  const backSlug = slug === "vox-pop-debate" ? "debate" : slug;
+  const backSlug = e.id;
 
   return (
     <>
