@@ -17,6 +17,10 @@ export interface EventConfig {
   instructions: string[];
   evaluationCriteria: Criterion[];
   registrationOpen: boolean;
+  rulesPdf?: string;
+  coordinatorName?: string;
+  coordinatorPhone?: string;
+  hidden?: boolean;
 }
 export interface Participant {
   name: string;

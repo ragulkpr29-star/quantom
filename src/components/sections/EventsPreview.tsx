@@ -38,7 +38,7 @@ export function EventsPreview() {
           </p>
         </div>
         <div className="event-grid">
-          {events.map((e, i) => (
+          {events.filter(e => !e.hidden).map((e, i) => (
             <EventCard
               key={e.id}
               event={e}

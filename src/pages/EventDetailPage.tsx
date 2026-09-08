@@ -4,13 +4,6 @@ import { Footer } from "../components/sections/Footer";
 import { eventService } from "../services";
 import { ArrowLeft, ArrowRight, CheckCircle2, Users, FileText, ExternalLink, FileDown } from "lucide-react";
 
-const rulesData = [
-  { num: "01", name: "Project Buzz", desc: "Project Presentation", file: "/assets/rules%20-%20Project.pdf" },
-  { num: "02", name: "Paper Fusion", desc: "Paper Presentation", file: "/assets/Rules%20paper%20(1).pdf" },
-  { num: "03", name: "Web Jam", desc: "Codeless Web Development", file: "/assets/Rules%20-%20web%20development.pdf" },
-  { num: "04", name: "Bid Boss", desc: "IPL Auction", file: "/assets/rules%20ipl%20auction%20edit.pdf" },
-  { num: "05", name: "Vox Pop", desc: "Debate", file: "/assets/rules%20debate(2).pdf" }
-];
 
 export default function EventDetailPage() {
   const { slug } = useParams();
@@ -67,11 +60,11 @@ export default function EventDetailPage() {
               <div className="detail-section">
                 <h2>Rules &amp; Guidelines</h2>
                 <p style={{ color: "var(--muted)", marginBottom: "24px", lineHeight: 1.6 }}>
-                  These PDF documents contain the official rules and guidelines for Quantum’27 events. Participants are requested to read the respective document carefully before participating.
+                  This PDF document contains the official rules and guidelines for {e.name}. Participants are requested to read the document carefully before participating.
                 </p>
+                {e.rulesPdf && (
                 <div style={{ display: "grid", gap: "16px", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))" }}>
-                  {rulesData.map((rule, idx) => (
-                    <div key={idx} style={{
+                    <div style={{
                       background: "rgba(255, 255, 255, 0.02)",
                       border: "1px solid rgba(255, 255, 255, 0.1)",
                       borderRadius: "12px",
@@ -91,22 +84,52 @@ export default function EventDetailPage() {
                           <FileText size={24} />
                         </div>
                         <div>
-                          <div style={{ fontSize: "12px", color: "var(--muted)", fontWeight: 600 }}>{rule.num} — {rule.name}</div>
-                          <h3 style={{ fontSize: "18px", margin: "4px 0 0 0", color: "#fff" }}>{rule.desc}</h3>
+                          <div style={{ fontSize: "12px", color: "var(--muted)", fontWeight: 600 }}>{e.number} — {e.name}</div>
+                          <h3 style={{ fontSize: "18px", margin: "4px 0 0 0", color: "#fff" }}>Event Document</h3>
                         </div>
                       </div>
                       <div style={{ display: "flex", gap: "8px", marginTop: "auto" }}>
-                        <a href={rule.file} target="_blank" rel="noopener noreferrer" className="btn btn-outline" style={{ flex: 1, padding: "8px", fontSize: "14px", display: "flex", justifyContent: "center", gap: "8px", alignItems: "center", textDecoration: "none" }}>
+                        <a href={e.rulesPdf} target="_blank" rel="noopener noreferrer" className="btn btn-outline" style={{ flex: 1, padding: "8px", fontSize: "14px", display: "flex", justifyContent: "center", gap: "8px", alignItems: "center", textDecoration: "none" }}>
                           <ExternalLink size={16} /> View
                         </a>
-                        <a href={rule.file} download className="btn btn-primary" style={{ flex: 1, padding: "8px", fontSize: "14px", display: "flex", justifyContent: "center", gap: "8px", alignItems: "center", textDecoration: "none" }}>
+                        <a href={e.rulesPdf} download className="btn btn-primary" style={{ flex: 1, padding: "8px", fontSize: "14px", display: "flex", justifyContent: "center", gap: "8px", alignItems: "center", textDecoration: "none" }}>
                           <FileDown size={16} /> Download
                         </a>
                       </div>
                     </div>
-                  ))}
+                </div>
+                )}
+              </div>
+
+              {e.coordinatorName && (
+              <div className="detail-section">
+                <h2>Student Coordinator</h2>
+                <div style={{
+                  background: "rgba(255, 255, 255, 0.02)",
+                  border: "1px solid rgba(255, 255, 255, 0.1)",
+                  borderRadius: "12px",
+                  padding: "20px",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "16px",
+                  marginTop: "16px"
+                }}>
+                  <div>
+                    <h3 style={{ fontSize: "18px", margin: "0 0 4px 0", color: "#fff" }}>{e.coordinatorName}</h3>
+                    {e.coordinatorPhone && (
+                      <p style={{ margin: 0, color: "var(--muted)", display: "flex", alignItems: "center", gap: "8px" }}>
+                        📞 {e.coordinatorPhone}
+                      </p>
+                    )}
+                  </div>
+                  {e.coordinatorPhone && (
+                  <a href={`tel:${e.coordinatorPhone.replace(/\s+/g, '')}`} className="btn btn-primary" style={{ display: "inline-flex", justifyContent: "center", padding: "8px 16px", fontSize: "14px", textDecoration: "none" }}>
+                    Call Coordinator
+                  </a>
+                  )}
                 </div>
               </div>
+              )}
 
               <div className="detail-section">
                 <h2>Important Instructions</h2>

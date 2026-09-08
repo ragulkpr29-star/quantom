@@ -28,6 +28,9 @@ export const events: EventConfig[] = [
       { name: "Time Management", weight: 10 },
     ],
     registrationOpen: true,
+    rulesPdf: "/assets/Rules%20paper%20(1).pdf",
+    coordinatorName: "Student Coordinator",
+    coordinatorPhone: "Brindha T : 63815 24704",
   },
   {
     id: "PR",
@@ -38,7 +41,7 @@ export const events: EventConfig[] = [
       "Showcase a working project and explain its problem, approach, implementation and impact.",
     participationType: "team",
     minMembers: 1,
-    maxMembers: 4,
+    maxMembers: 3,
     eligibility: "UG students of the Department of Computer Technology.",
     rules: [
       "A participant can participate in either Paper Presentation or Project Presentation, but not both.",
@@ -57,6 +60,9 @@ export const events: EventConfig[] = [
       { name: "Time Management", weight: 10 },
     ],
     registrationOpen: true,
+    rulesPdf: "/assets/rules%20-%20Project.pdf",
+    coordinatorName: "Student Coordinator",
+    coordinatorPhone: "Sangami I : 8438590169",
   },
   {
     id: "VO",
@@ -94,6 +100,9 @@ export const events: EventConfig[] = [
       { name: "Confidence & Time Management", weight: 10 },
     ],
     registrationOpen: true,
+    rulesPdf: "/assets/rules%20debate(2).pdf",
+    coordinatorName: "Student Coordinator",
+    coordinatorPhone: "Anishkaa K S : 9943997603",
   },
   {
     id: "WE",
@@ -104,7 +113,7 @@ export const events: EventConfig[] = [
       "Create and present a compelling web experience. Official participation details will be updated from the event document.",
     participationType: "team",
     minMembers: 1,
-    maxMembers: null,
+    maxMembers: 2,
     eligibility: "UG students of the Department of Computer Technology.",
     rules: [
       "Event-specific rules will be updated when the official document is provided.",
@@ -112,7 +121,10 @@ export const events: EventConfig[] = [
     instructions: ["Follow the organizers’ final venue and time instructions."],
     evaluationCriteria: [],
     registrationOpen: true,
-  }, 
+    rulesPdf: "/assets/Rules%20-%20web%20development.pdf",
+    coordinatorName: "Student Coordinator",
+    coordinatorPhone: "Kribasrenee S A : 9159475113",
+  },
   {
     id: "SH",
     number: "05",
@@ -139,6 +151,7 @@ export const events: EventConfig[] = [
       { name: "Time Management", weight: 10 },
     ],
     registrationOpen: true,
+    hidden: true,
   },
   {
     id: "IP",
@@ -171,6 +184,9 @@ export const events: EventConfig[] = [
     instructions: ["Report 15 minutes before the scheduled start."],
     evaluationCriteria: [],
     registrationOpen: true,
+    rulesPdf: "/assets/rules%20ipl%20auction%20edit.pdf",
+    coordinatorName: "Student Coordinator",
+    coordinatorPhone: "Sanjay G : 9791292645",
   },
 ];
 export const registrations: Registration[] = [];

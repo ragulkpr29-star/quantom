@@ -96,7 +96,7 @@ export default function RegistrationPage() {
             description: "Event registration",
             participationType: "team", // Default assumption
             minMembers: 1,
-            maxMembers: 4,
+            maxMembers: 3,
             eligibility: "Open",
             rules: [],
             instructions: [],

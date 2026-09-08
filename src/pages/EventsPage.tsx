@@ -45,7 +45,7 @@ export default function EventsPage() {
         <div className="events-page-body">
           <div className="container" ref={gridRef}>
             <div className="event-grid">
-              {events.map((e, i) => (
+              {events.filter(e => !e.hidden).map((e, i) => (
                 <EventCard
                   key={e.id}
                   event={e}

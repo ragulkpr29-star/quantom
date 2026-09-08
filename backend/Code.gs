@@ -158,6 +158,28 @@ function handleRegister(data) {
     const eventName = data.eventName;
     const eventId = data.eventId;
     
+    // Backend validation for member limits
+    let membersCount = 1; // Leader is always 1
+    if (data.member2 && data.member2.trim() !== "") membersCount++;
+    if (data.member3 && data.member3.trim() !== "") membersCount++;
+    if (data.member4 && data.member4.trim() !== "") membersCount++;
+
+    if (eventId === "PP" && membersCount > 3) {
+      return ContentService.createTextOutput(JSON.stringify({ success: false, error: "Paper Presentation allows a maximum of 3 members." })).setMimeType(ContentService.MimeType.JSON);
+    }
+    if (eventId === "PR" && membersCount > 3) {
+      return ContentService.createTextOutput(JSON.stringify({ success: false, error: "Project Presentation allows a maximum of 3 members." })).setMimeType(ContentService.MimeType.JSON);
+    }
+    if (eventId === "WE" && membersCount > 2) {
+      return ContentService.createTextOutput(JSON.stringify({ success: false, error: "Web Designing allows a maximum of 2 members." })).setMimeType(ContentService.MimeType.JSON);
+    }
+    if (eventId === "IP" && membersCount > 2) {
+      return ContentService.createTextOutput(JSON.stringify({ success: false, error: "IPL Auction allows a maximum of 2 members." })).setMimeType(ContentService.MimeType.JSON);
+    }
+    if (eventId === "VO" && membersCount > 1) {
+      return ContentService.createTextOutput(JSON.stringify({ success: false, error: "Vox Pop - Debate allows a maximum of 1 member." })).setMimeType(ContentService.MimeType.JSON);
+    }
+    
     const ss = SpreadsheetApp.getActiveSpreadsheet();
     let masterSheet = ss.getSheetByName("MASTER");
     if (!masterSheet) {
