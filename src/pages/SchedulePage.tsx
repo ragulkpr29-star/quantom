@@ -77,10 +77,12 @@ export default function SchedulePage() {
             {/* Timeline */}
             <div className="timeline" ref={timelineRef}>
               <div className="timeline-line" aria-hidden="true" />
-              {events.map((e, i) => (
-                <div className="timeline-row reveal" key={e.id}>
-                  <div className="timeline-time">{formatTime(i)}</div>
-                  <div className="timeline-node">
+              {events.filter(e => e.id !== "SH").map((e) => {
+                const originalIndex = events.indexOf(e);
+                return (
+                  <div className="timeline-row reveal" key={e.id}>
+                    <div className="timeline-time">{formatTime(originalIndex)}</div>
+                    <div className="timeline-node">
                     <div className="timeline-dot" />
                   </div>
                   <div className="timeline-card">
@@ -103,7 +105,8 @@ export default function SchedulePage() {
                     </Link>
                   </div>
                 </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>

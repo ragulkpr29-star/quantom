@@ -269,6 +269,7 @@ function handleGetRegistrations(eventId) {
   
   for (let i = 1; i < data.length; i++) {
     const row = data[i];
+    if (!row[0]) continue; // Skip empty rows
     if (eventId && eventId !== "all" && row[1] !== eventId) {
       continue;
     }
@@ -315,6 +316,7 @@ function handleGetEvaluations(eventId) {
   
   for (let i = 1; i < data.length; i++) {
     const row = data[i];
+    if (!row[0]) continue; // Skip empty rows
     
     if (row[1] === eventId) {
       evaluations.push({
@@ -721,6 +723,7 @@ function handleGetDashboardStats() {
     const data = masterSheet.getDataRange().getValues();
     for (let i = 1; i < data.length; i++) {
       const row = data[i];
+      if (!row[0]) continue; // Skip empty rows where Team ID is missing
       const evId = row[1];
       const isTeam = row[3] !== ""; // has team name
       
