@@ -1,13 +1,45 @@
+import { useState, useEffect } from "react";
 import { Link, useParams, Navigate } from "react-router-dom";
 import { Navbar } from "../components/sections/Navbar";
 import { Footer } from "../components/sections/Footer";
 import { eventService } from "../services";
-import { ArrowLeft, ArrowRight, CheckCircle2, Users, FileText, ExternalLink, FileDown } from "lucide-react";
+import { ArrowLeft, ArrowRight, CheckCircle2, Users, FileText, ExternalLink, FileDown, X, AlertCircle } from "lucide-react";
 
+const REGISTRATION_CLOSED = true;
 
 export default function EventDetailPage() {
   const { slug } = useParams();
   const e = eventService.getById(slug || "");
+
+  const [showModal, setShowModal] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
+
+  useEffect(() => {
+    if (REGISTRATION_CLOSED) {
+      setShowModal(true);
+      setIsClosing(false);
+    }
+  }, [slug]);
+
+  const handleCloseModal = () => {
+    setIsClosing(true);
+    setTimeout(() => {
+      setShowModal(false);
+      setIsClosing(false);
+    }, 300);
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        handleCloseModal();
+      }
+    };
+    if (showModal) {
+      window.addEventListener("keydown", handleKeyDown);
+    }
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [showModal]);
 
   if (!e) return <Navigate to="/events" replace />;
 
@@ -23,6 +55,151 @@ export default function EventDetailPage() {
   return (
     <>
       <Navbar />
+      
+      {/* Dynamic Keyframes for Modal */}
+      <style>
+        {`
+          @keyframes modalFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+          }
+          @keyframes modalFadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+          }
+          @keyframes modalScaleIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+          }
+          @keyframes modalScaleOut {
+            from { opacity: 1; transform: scale(1); }
+            to { opacity: 0; transform: scale(0.95); }
+          }
+        `}
+      </style>
+
+      {/* Modal */}
+      {showModal && (
+        <div 
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            zIndex: 9999,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "20px",
+            animation: isClosing ? "modalFadeOut 0.3s ease forwards" : "modalFadeIn 0.3s ease forwards"
+          }}
+        >
+          {/* Backdrop */}
+          <div 
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              background: "rgba(7, 52, 74, 0.4)",
+              backdropFilter: "blur(4px)"
+            }}
+            onClick={handleCloseModal}
+          />
+          
+          {/* Modal Content */}
+          <div 
+            style={{
+              background: "var(--white)",
+              borderRadius: "var(--radius-lg, 20px)",
+              padding: "32px",
+              maxWidth: "420px",
+              width: "100%",
+              position: "relative",
+              boxShadow: "var(--shadow-lg)",
+              animation: isClosing ? "modalScaleOut 0.3s ease forwards" : "modalScaleIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              textAlign: "center"
+            }}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="modal-title"
+          >
+            <button 
+              onClick={handleCloseModal}
+              style={{
+                position: "absolute",
+                top: "16px",
+                right: "16px",
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                color: "var(--muted)",
+                padding: "8px",
+                display: "flex",
+                borderRadius: "50%",
+                transition: "background 0.2s"
+              }}
+              onMouseOver={(e) => e.currentTarget.style.background = "rgba(0,0,0,0.05)"}
+              onMouseOut={(e) => e.currentTarget.style.background = "none"}
+              aria-label="Close modal"
+            >
+              <X size={20} />
+            </button>
+
+            <div style={{
+              width: "56px",
+              height: "56px",
+              borderRadius: "50%",
+              background: "rgba(239, 68, 68, 0.1)",
+              color: "#ef4444",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              marginBottom: "20px"
+            }}>
+              <AlertCircle size={32} />
+            </div>
+
+            <h2 id="modal-title" style={{ fontSize: "24px", margin: "0 0 12px 0", color: "var(--text)", fontWeight: 700 }}>
+              Registration Closed
+            </h2>
+            
+            <p style={{ color: "var(--muted)", margin: "0 0 28px 0", lineHeight: 1.6, fontSize: "15px" }}>
+              Registration for this event has ended. You can still view the event details and rules &amp; guidelines.
+            </p>
+
+            <button 
+              onClick={handleCloseModal}
+              className="btn btn-primary btn-full"
+              style={{
+                background: "#ef4444",
+                color: "#fff",
+                border: "none",
+                padding: "14px",
+                borderRadius: "var(--radius-md, 12px)",
+                fontWeight: 600,
+                fontSize: "15px",
+                cursor: "pointer",
+                width: "100%",
+                transition: "background 0.2s, transform 0.2s",
+                boxShadow: "0 4px 12px rgba(239, 68, 68, 0.2)"
+              }}
+              onMouseOver={(e) => e.currentTarget.style.background = "#dc2626"}
+              onMouseOut={(e) => e.currentTarget.style.background = "#ef4444"}
+              onMouseDown={(e) => e.currentTarget.style.transform = "scale(0.98)"}
+              onMouseUp={(e) => e.currentTarget.style.transform = "scale(1)"}
+            >
+              OK, GOT IT
+            </button>
+          </div>
+        </div>
+      )}
+
       <main style={{ background: "var(--surface)" }}>
         <div className="container" style={{ paddingTop: "40px", paddingBottom: "64px" }}>
           {/* Back */}
@@ -145,17 +322,39 @@ export default function EventDetailPage() {
             <aside className="detail-cta">
               <span className="eyebrow">Ready?</span>
               <h3>Register for this Event</h3>
-              <p>
-                Read all the event information, then complete your registration
-                before 21 September 2026.
-              </p>
-              <Link className="btn btn-primary btn-full" to={`/register/${e.id}`}>
-                Continue to Registration{" "}
-                <span className="btn-arrow">
-                  <ArrowRight size={16} />
-                </span>
-              </Link>
-              <p className="deadline-note">Registration closes 21 Sep 2026</p>
+              {REGISTRATION_CLOSED ? (
+                <>
+                  <p>Registration for this event has ended.</p>
+                  <div style={{
+                    color: "var(--red, #ef4444)",
+                    fontWeight: 700,
+                    fontSize: "1.25rem",
+                    textAlign: "center",
+                    marginTop: "24px",
+                    padding: "16px",
+                    border: "2px solid rgba(239, 68, 68, 0.2)",
+                    borderRadius: "8px",
+                    background: "rgba(239, 68, 68, 0.05)",
+                    letterSpacing: "0.05em"
+                  }}>
+                    REGISTRATION CLOSED
+                  </div>
+                </>
+              ) : (
+                <>
+                  <p>
+                    Read all the event information, then complete your registration
+                    before 21 September 2026.
+                  </p>
+                  <Link className="btn btn-primary btn-full" to={`/register/${e.id}`}>
+                    Continue to Registration{" "}
+                    <span className="btn-arrow">
+                      <ArrowRight size={16} />
+                    </span>
+                  </Link>
+                  <p className="deadline-note">Registration closes 21 Sep 2026</p>
+                </>
+              )}
             </aside>
           </div>
         </div>
